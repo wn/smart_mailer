@@ -12,7 +12,7 @@ from typing import List, Dict, Tuple
 
 DEPT_ALL = "all"
 ARG_MAP = (("d", "dept"), ("c", "contacts"), ("m", "message"))
-USAGE_HELPER = "usage: python3 smart_mailer.py --message email_message.txt --contact maildata.csv --dept 'Team Y'"
+USAGE_HELPER = "usage: python3 smart_mailer.py --message <email file> --contact <contacts file> --dept '<dept to filter>'"
 
 # Email message placeholders
 NAME_PLACEHOLDER = "#name#"
