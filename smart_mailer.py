@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from smtp_config import *
 import collections
 import csv
 import getopt
@@ -11,20 +12,13 @@ from typing import List, Dict, Tuple
 
 DEPT_ALL = "all"
 ARG_MAP = (("d", "dept"), ("c", "contacts"), ("m", "message"))
-USAGE_HELPER = "usage: smart_mailer.py --message email_message.txt --contact maildata.csv --dept all"
+USAGE_HELPER = "usage: python3 smart_mailer.py --message email_message.txt --contact maildata.csv --dept 'Team Y'"
 
 # Email message placeholders
 NAME_PLACEHOLDER = "#name#"
 DEPARTMENT_PLACEHOLDER = "#department#"
 SENDER_PLACEHOLDER = "#sender#"
 RECEIVER_PLACEHOLDER = "#receiver#"
-
-# SMTP server configuration
-SMTP_HOSTNAME = "smtp.gmail.com"
-SMTP_PORT = 465
-EMAIL_DELAY = 3
-sender = ""  # TODO(FILL IN YOUR EMAIL ADDRESS)
-password = ""  # TODO(FILL IN YOUR PASSWORD)
 
 # CSV HEADERS
 DEPT_HEADER = "dept"
@@ -52,17 +46,17 @@ def disconnect_from_smtp(server_ssl):
     server_ssl.close()
 
 
-def send_mail(sender_email: str, receiver_email: str, message: str, smtp_conn) -> bool:
+def send_mail(sender_email: str, receiver_name: str, receiver_email: str, message: str, smtp_conn) -> bool:
     """
     Send mail to the receiver
     """
     try:
-        print(f"sending from <{sender_email}> to <{receiver_email}>")
+        print(f"sending from <{sender_email}> to {receiver_name}<{receiver_email}>")
         smtp_conn.sendmail(sender_email, receiver_email, message)
     except Exception as e:
-        print(f"failed to send mail from {sender_email} to {receiver_email}")
+        print(f"failed to send mail from <{sender_email}> to {receiver_name}<{receiver_email}>")
         return False
-    print(f"message successfully sent from <{sender_email}> to <{receiver_email}>")
+    print(f"message successfully sent from <{sender_email}> to {receiver_name}<{receiver_email}>")
     print()
     return True
 
@@ -79,11 +73,11 @@ def send_mails(sender_email: str, receivers: Dict[str, str], placeholder_msg: st
     stats = collections.defaultdict(int)
     for data in receivers:
         receiver_email = data[EMAIL_ID_HEADER]
-        name = data[NAME_HEADER]
-        dept = data[DEPT_HEADER]
-        message = parse_message(name, dept, receiver_email, sender_email, placeholder_msg)
-        if send_mail(sender_email, receiver_email, message, smtp_conn):
-            stats[dept] += 1
+        receiver_name = data[NAME_HEADER]
+        receiver_dept = data[DEPT_HEADER]
+        message = parse_message(receiver_name, receiver_dept, receiver_email, sender_email, placeholder_msg)
+        if send_mail(sender_email, receiver_name, receiver_email, message, smtp_conn):
+            stats[receiver_dept] += 1
         time.sleep(EMAIL_DELAY)  # to prevent spamming
     return stats
 
