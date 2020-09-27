@@ -1,0 +1,10 @@
+From: #sender#
+To: #receiver#
+Subject: NICE JOB!!!
+
+Congratulations!
+Dearest #name# from #department#,
+  Well done #name#!
+
+Best regards
+From everyone at #department#
